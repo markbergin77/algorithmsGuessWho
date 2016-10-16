@@ -1,6 +1,6 @@
 Round 1
 Player P1 guessing Attribute eyeColor blue
-Player P3 answering false
-Player P1 guessing Attribute eyeColor blue
-Player P3 answering false
+Player P3 answering true
+Player P3 guessing Attribute eyeColor blue
+Player P1 answering false
 It's a tie!
