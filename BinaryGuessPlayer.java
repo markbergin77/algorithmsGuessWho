@@ -1,5 +1,6 @@
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 
@@ -40,28 +41,91 @@ public class BinaryGuessPlayer implements Player
 
 	public Guess guess() {
 		//System.out.println(possiblePeople.toString());
-		String mostCommon;
-		LinkedList<String> attributesSearched = new LinkedList<String>();
+		String mostCommonAttribute = null;
+		String mostCommonValue = null;
+		int mostCommonNumber = 0;
+		
+		if(possibleNames.size() > 1)
+		{
+		/* Yes I know this looks awfully hacky, most efficient way to get attributes I 
+		 * could think of considering config files have no need for error checking */
+		int attibutesDistance = (possiblePeopleMap.get(possibleNames.get(1)) - possiblePeopleMap.get(possibleNames.get(0)));
+		//System.out.println(possibleNames.toString());
 		try{
-			for(int i = 0; i < possibleNames.size() ; i ++)
+			String current;
+			//-1 skips the Player name/title
+			for(int i = 1; i < possibleNames.size(); i ++)
 			{
-				System.out.println(possibleNames.get(i));
-				System.out.println(possiblePeopleMap.get(possibleNames.get(i)));
+				//attributesDistance - 2 is the number of attributes from Person title to the blank config space
+				String currentAttribute[] = new String[attibutesDistance];
+
 				
+				for(int looper = 0; looper <= attibutesDistance - 1; looper++)
+				{
+					currentAttribute[looper] = playerAttributes.get(possiblePeopleMap.get(possibleNames.get(looper)) + i).get(1);
+					//System.out.println(playerAttributes.get(possiblePeopleMap.get(possibleNames.get(looper)) + i).toString());
+				}
+				//index of the attribute type we're on, Glasses, Height, etc. (Not the adjective like yellow, etc)
+				
+				
+			    HashMap<String, Integer> commonAttribute = getCommonAttribute(currentAttribute);
+			    
+			    String foundAttribute = null;
+			    for (String key : commonAttribute.keySet()) {
+			    	foundAttribute = key;
+			    	} 
+			    
+			    //Makes sure found key doesn't apply for all possible people
+			   if(commonAttribute.get(foundAttribute) > mostCommonNumber && commonAttribute.get(foundAttribute) != attibutesDistance - 1)
+			   {
+				   mostCommonAttribute = playerAttributes.get(possiblePeopleMap.get(possibleNames.get(0)) + i).get(0);
+				   mostCommonValue =  foundAttribute;
+				   mostCommonNumber = commonAttribute.get(foundAttribute);
+			   }
 			}
 			//System.out.println(playerAttributes.toString());
 			// placeholder, replace
-	} catch(Exception e)
+		}		
+		 catch(Exception e)
 	{
+		System.err.println(e);
 	}
 	
-			return new Guess(Guess.GuessType.Person, "", "Placeholder");
+			return new Guess(Guess.GuessType.Attribute, mostCommonAttribute,mostCommonValue);
+		}
+		return new Guess(Guess.GuessType.Person, "", possibleNames.get(0));
 	} // end of guess()
-
-	public int countRepetedAttribute(String attribute)
+	
+	public HashMap<String,Integer> getCommonAttribute(String[] attributes)
 	{
-		return 0;
+		HashMap<String, Integer> commonAttribute = new HashMap<String, Integer>();
+		int count = 1, tempCount;
+		  String common = attributes[0];
+		  String temp;
+		    
+
+		  for (int i = 0; i < (attributes.length - 1); i++)
+		  {
+		    temp = attributes[i];
+		  //  System.out.println(temp);
+		    tempCount = 0;
+		    for (int j = 0; j < attributes.length - 1; j++)
+		    {
+		      if (temp.equals(attributes[j]))
+		        tempCount++;
+		    }
+		    if (tempCount > count)
+		    {
+		    	common = temp;
+		      count = tempCount;
+		    }
+		  }
+		  commonAttribute.put(common, count);
+		  return commonAttribute;
+		
 	}
+	
+	
 	public boolean answer(Guess currGuess) {
 
 		// placeholder, replace
@@ -91,6 +155,7 @@ public class BinaryGuessPlayer implements Player
 		// https://lms.rmit.edu.au/webapps/discussionboard/do/message?action=list_messages&forum_id=_512548_1&
 		// nav=discussion_board_entry&conf_id=_392455_1&course_id=_341562_1&message_id=_3477702_1#msg__3477702_1Id
 
+		//Index incorporates for the player attribtues only
 		int index = 0;
 		
 		String thisLine = null;
@@ -101,7 +166,7 @@ public class BinaryGuessPlayer implements Player
 			// opens config file for reading
 			BufferedReader br = new BufferedReader(new FileReader(gameFilename));
 			while ((thisLine = br.readLine()) != null) {
-				index ++;
+				
 				// Uses split to format to array
 				String[] newAttributeLine = thisLine.split(" ");
 
