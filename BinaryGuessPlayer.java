@@ -42,15 +42,20 @@ public class BinaryGuessPlayer implements Player
 		//System.out.println(possiblePeople.toString());
 		String mostCommon;
 		LinkedList<String> attributesSearched = new LinkedList<String>();
-		for(int i = 0; i < possibleNames.size(); i ++)
-		{
-			System.out.println(possibleNames.get(i));
-			
-			
-		}
-		//System.out.println(playerAttributes.toString());
-		// placeholder, replace
-		return new Guess(Guess.GuessType.Person, "", "Placeholder");
+		try{
+			for(int i = 0; i < possibleNames.size() ; i ++)
+			{
+				System.out.println(possibleNames.get(i));
+				System.out.println(possiblePeopleMap.get(possibleNames.get(i)));
+				
+			}
+			//System.out.println(playerAttributes.toString());
+			// placeholder, replace
+	} catch(Exception e)
+	{
+	}
+	
+			return new Guess(Guess.GuessType.Person, "", "Placeholder");
 	} // end of guess()
 
 	public int countRepetedAttribute(String attribute)
@@ -126,7 +131,7 @@ public class BinaryGuessPlayer implements Player
 					newAttribute = new LinkedList<String>();
 
 					newAttributeLine = br.readLine().split(" ");
-
+					index ++;
 					while (newAttributeLine.length == 2) {
 						for (int i = 0; i < newAttributeLine.length; i++) {
 							newAttribute.add(newAttributeLine[i]);
@@ -136,6 +141,7 @@ public class BinaryGuessPlayer implements Player
 						newAttribute = new LinkedList<String>();
 						// Catches exception on last attempt here
 						newAttributeLine = br.readLine().split(" ");
+						index ++;
 					}
 
 				}
@@ -158,6 +164,7 @@ public class BinaryGuessPlayer implements Player
 					newAttribute = new LinkedList<String>();
 
 					newAttributeLine = br.readLine().split(" ");
+					index ++;
 
 					while (newAttributeLine.length == 2) {
 						for (int i = 0; i < newAttributeLine.length; i++) {
@@ -167,6 +174,7 @@ public class BinaryGuessPlayer implements Player
 						newAttribute = new LinkedList<String>();
 						// Catches exception on last attempt here
 						newAttributeLine = br.readLine().split(" ");
+						index ++;
 					}
 
 				}
