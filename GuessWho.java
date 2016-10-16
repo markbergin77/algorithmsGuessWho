@@ -98,6 +98,7 @@ public class GuessWho
             switch (player1Type) {
                 // Task B (random guessing player)
                 case "random":
+                ;
                     player1 = new RandomGuessPlayer(gameFilename, player1AssignedName);
                     break;
                 // Task C (binary search based guessing player)

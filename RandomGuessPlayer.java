@@ -68,7 +68,6 @@ public class RandomGuessPlayer implements Player {
 		// faulty.
 		// https://lms.rmit.edu.au/webapps/discussionboard/do/message?action=list_messages&forum_id=_512548_1&
 		// nav=discussion_board_entry&conf_id=_392455_1&course_id=_341562_1&message_id=_3477702_1#msg__3477702_1Id
-
 		String thisLine = null;
 		LinkedList<String> newAttribute = new LinkedList<String>();
 		boolean foundPlayer = false;
@@ -77,9 +76,10 @@ public class RandomGuessPlayer implements Player {
 			// opens config file for reading
 			BufferedReader br = new BufferedReader(new FileReader(gameFilename));
 			while ((thisLine = br.readLine()) != null) {
+				
 				// Uses split to format to array
 				String[] newAttributeLine = thisLine.split(" ");
-
+				System.out.println(Arrays.toString(newAttributeLine));
 				// Adds the total attributes
 				// If the length is > 2
 				if (newAttributeLine.length > 1 && foundPlayer == false) {
@@ -146,10 +146,11 @@ public class RandomGuessPlayer implements Player {
 			}
 			br.close();
 		} catch (Exception e) {
+		//	System.err.println(e);
 		}
-		System.out.println(playerAttributes.toString());
-		System.out.println(totalAttributes.toString());
-		System.out.println(personalAttributes.toString());
+	//	System.out.println(playerAttributes.toString());
+		//System.out.println(totalAttributes.toString());
+		//System.out.println(personalAttributes.toString());
 	}
 
 } // end of class RandomGuessPlayer

@@ -15,6 +15,7 @@ public class BinaryGuessPlayer implements Player
 	ArrayList<LinkedList<String>> totalAttributes = new ArrayList<LinkedList<String>>();
 	ArrayList<LinkedList<String>> playerAttributes = new ArrayList<LinkedList<String>>();
 	ArrayList<LinkedList<String>> personalAttributes = new ArrayList<LinkedList<String>>();
+	LinkedList<String> possiblePeople = new LinkedList<String>();
 
 	/**
 	 * Loads the game configuration from gameFilename, and also store the chosen
@@ -36,7 +37,8 @@ public class BinaryGuessPlayer implements Player
 	} // end of RandomGuessPlayer()
 
 	public Guess guess() {
-
+		System.out.println(possiblePeople.toString());
+		System.out.println(playerAttributes.toString());
 		// placeholder, replace
 		return new Guess(Guess.GuessType.Person, "", "Placeholder");
 	} // end of guess()
@@ -101,6 +103,8 @@ public class BinaryGuessPlayer implements Player
 					newAttribute.add(newAttributeLine[0]);
 					personalAttributes.add(newAttribute);
 					playerAttributes.add(newAttribute);
+					//adds the player name to possible people left
+					possiblePeople.add(newAttributeLine[0]);
 					newAttribute = new LinkedList<String>();
 
 					newAttributeLine = br.readLine().split(" ");
@@ -122,9 +126,13 @@ public class BinaryGuessPlayer implements Player
 				// Adds the player attributes.
 				// System.out.println(Arrays.toString(newAttributeLine));
 				if (newAttributeLine.length == 1 && newAttributeLine[0].contains("P")) {
+					
 					//Total data is found at top of file, if we find player, close off the TotalAttributes
 					foundPlayer = true;
-
+					
+					//adds the player name to possible people left
+					possiblePeople.add(newAttributeLine[0]);
+					
 					newAttribute = new LinkedList<String>();
 					newAttribute.add(newAttributeLine[0]);
 					playerAttributes.add(newAttribute);

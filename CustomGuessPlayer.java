@@ -2,6 +2,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
+
 /**
  * Your customised guessing player.
  * This player is for bonus task.
@@ -148,9 +149,9 @@ public class CustomGuessPlayer implements Player
 			br.close();
 		} catch (Exception e) {
 		}
-		System.out.println(playerAttributes.toString());
-		System.out.println(totalAttributes.toString());
-		System.out.println(personalAttributes.toString());
+		//System.out.println(playerAttributes.toString());
+	//	System.out.println(totalAttributes.toString());
+		//System.out.println(personalAttributes.toString());
 	}
 
 	
