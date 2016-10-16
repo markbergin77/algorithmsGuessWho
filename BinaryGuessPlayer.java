@@ -1,5 +1,6 @@
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 
 /**
@@ -15,7 +16,7 @@ public class BinaryGuessPlayer implements Player
 	ArrayList<LinkedList<String>> totalAttributes = new ArrayList<LinkedList<String>>();
 	ArrayList<LinkedList<String>> playerAttributes = new ArrayList<LinkedList<String>>();
 	ArrayList<LinkedList<String>> personalAttributes = new ArrayList<LinkedList<String>>();
-	LinkedList<String> possiblePeople = new LinkedList<String>();
+	HashMap<String, Integer> possiblePeople = new HashMap<String, Integer>();
 
 	/**
 	 * Loads the game configuration from gameFilename, and also store the chosen
@@ -38,7 +39,7 @@ public class BinaryGuessPlayer implements Player
 
 	public Guess guess() {
 		System.out.println(possiblePeople.toString());
-		System.out.println(playerAttributes.toString());
+		//System.out.println(playerAttributes.toString());
 		// placeholder, replace
 		return new Guess(Guess.GuessType.Person, "", "Placeholder");
 	} // end of guess()
@@ -72,6 +73,8 @@ public class BinaryGuessPlayer implements Player
 		// https://lms.rmit.edu.au/webapps/discussionboard/do/message?action=list_messages&forum_id=_512548_1&
 		// nav=discussion_board_entry&conf_id=_392455_1&course_id=_341562_1&message_id=_3477702_1#msg__3477702_1Id
 
+		int index = 0;
+		
 		String thisLine = null;
 		LinkedList<String> newAttribute = new LinkedList<String>();
 		boolean foundPlayer = false;
@@ -80,6 +83,7 @@ public class BinaryGuessPlayer implements Player
 			// opens config file for reading
 			BufferedReader br = new BufferedReader(new FileReader(gameFilename));
 			while ((thisLine = br.readLine()) != null) {
+				index ++;
 				// Uses split to format to array
 				String[] newAttributeLine = thisLine.split(" ");
 
@@ -104,7 +108,7 @@ public class BinaryGuessPlayer implements Player
 					personalAttributes.add(newAttribute);
 					playerAttributes.add(newAttribute);
 					//adds the player name to possible people left
-					possiblePeople.add(newAttributeLine[0]);
+					possiblePeople.put(newAttributeLine[0], index);
 					newAttribute = new LinkedList<String>();
 
 					newAttributeLine = br.readLine().split(" ");
@@ -131,7 +135,7 @@ public class BinaryGuessPlayer implements Player
 					foundPlayer = true;
 					
 					//adds the player name to possible people left
-					possiblePeople.add(newAttributeLine[0]);
+					possiblePeople.put(newAttributeLine[0], index);					
 					
 					newAttribute = new LinkedList<String>();
 					newAttribute.add(newAttributeLine[0]);
