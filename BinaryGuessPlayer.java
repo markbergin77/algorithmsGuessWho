@@ -16,8 +16,9 @@ public class BinaryGuessPlayer implements Player
 	ArrayList<LinkedList<String>> totalAttributes = new ArrayList<LinkedList<String>>();
 	ArrayList<LinkedList<String>> playerAttributes = new ArrayList<LinkedList<String>>();
 	ArrayList<LinkedList<String>> personalAttributes = new ArrayList<LinkedList<String>>();
-	HashMap<String, Integer> possiblePeople = new HashMap<String, Integer>();
-
+	ArrayList<String> possibleNames = new ArrayList<String>();
+	HashMap<String, Integer> possiblePeopleMap = new HashMap<String, Integer>();
+	
 	/**
 	 * Loads the game configuration from gameFilename, and also store the chosen
 	 * person.
@@ -38,12 +39,24 @@ public class BinaryGuessPlayer implements Player
 	} // end of RandomGuessPlayer()
 
 	public Guess guess() {
-		System.out.println(possiblePeople.toString());
+		//System.out.println(possiblePeople.toString());
+		String mostCommon;
+		LinkedList<String> attributesSearched = new LinkedList<String>();
+		for(int i = 0; i < possibleNames.size(); i ++)
+		{
+			System.out.println(possibleNames.get(i));
+			
+			
+		}
 		//System.out.println(playerAttributes.toString());
 		// placeholder, replace
 		return new Guess(Guess.GuessType.Person, "", "Placeholder");
 	} // end of guess()
 
+	public int countRepetedAttribute(String attribute)
+	{
+		return 0;
+	}
 	public boolean answer(Guess currGuess) {
 
 		// placeholder, replace
@@ -107,8 +120,9 @@ public class BinaryGuessPlayer implements Player
 					newAttribute.add(newAttributeLine[0]);
 					personalAttributes.add(newAttribute);
 					playerAttributes.add(newAttribute);
+					possibleNames.add(newAttributeLine[0]);
 					//adds the player name to possible people left
-					possiblePeople.put(newAttributeLine[0], index);
+					possiblePeopleMap.put(newAttributeLine[0], index);
 					newAttribute = new LinkedList<String>();
 
 					newAttributeLine = br.readLine().split(" ");
@@ -135,7 +149,8 @@ public class BinaryGuessPlayer implements Player
 					foundPlayer = true;
 					
 					//adds the player name to possible people left
-					possiblePeople.put(newAttributeLine[0], index);					
+					possiblePeopleMap.put(newAttributeLine[0], index);	
+					possibleNames.add(newAttributeLine[0]);
 					
 					newAttribute = new LinkedList<String>();
 					newAttribute.add(newAttributeLine[0]);
@@ -164,7 +179,6 @@ public class BinaryGuessPlayer implements Player
 		//System.out.println(totalAttributes.toString());
 		//System.out.println(personalAttributes.toString());
 	}
-
 
 	
 } // end of class BinaryGuessPlayer
