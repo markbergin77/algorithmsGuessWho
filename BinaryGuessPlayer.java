@@ -11,11 +11,17 @@ import java.util.LinkedList;
  * that this class implements the Player interface (directly or indirectly).
  */
 public class BinaryGuessPlayer implements Player {
+	//Arrays for use
 	String name;
+	//Used for when scanning for most common answers
 	ArrayList<LinkedList<String>> totalAttributes = new ArrayList<LinkedList<String>>();
+	//Not used yet. Might end up removing
 	ArrayList<LinkedList<String>> playerAttributes = new ArrayList<LinkedList<String>>();
+	//Players personal attributes, used for when checking answers
 	ArrayList<LinkedList<String>> personalAttributes = new ArrayList<LinkedList<String>>();
+	//Possible players remaining (choices)
 	ArrayList<String> possibleNames = new ArrayList<String>();
+	//Used for indexing efficiently when traversing through config.
 	HashMap<String, Integer> possiblePeopleMap = new HashMap<String, Integer>();
 
 	/**
@@ -52,6 +58,7 @@ public class BinaryGuessPlayer implements Player {
 			int attibutesDistance = (possiblePeopleMap.get(possibleNames.get(1))
 					- possiblePeopleMap.get(possibleNames.get(0)));
 			// System.out.println(possibleNames.toString());
+			
 			try {
 				String current;
 				// -1 skips the Player name/title
@@ -70,20 +77,24 @@ public class BinaryGuessPlayer implements Player {
 					// etc. (Not the adjective like yellow, etc)
 
 					HashMap<String, Integer> commonAttribute = getCommonAttribute(currentAttribute);
-
-					String foundAttribute = null;
+					
+					//Need to grab the key for checking most common number
+					String foundValue = null;
 					for (String key : commonAttribute.keySet()) {
-						foundAttribute = key;
+						foundValue = key;
 					}
 
 					// Makes sure found key doesn't apply for all possible
-					// people
-					if (commonAttribute.get(foundAttribute) > mostCommonNumber
-							&& commonAttribute.get(foundAttribute) != attibutesDistance - 1) {
+					// people, and checks if higher than current set
+					if (commonAttribute.get(foundValue) > mostCommonNumber
+							&& commonAttribute.get(foundValue) != attibutesDistance - 1) {
+						//Sets the attribute ("height" "glasses" "colour" etc.)
 						mostCommonAttribute = playerAttributes.get(possiblePeopleMap.get(possibleNames.get(0)) + i)
 								.get(0);
-						mostCommonValue = foundAttribute;
-						mostCommonNumber = commonAttribute.get(foundAttribute);
+						//Sets the value ("Red", 2 etc)
+						mostCommonValue = foundValue;
+						//number of times the value was found
+						mostCommonNumber = commonAttribute.get(foundValue);
 					}
 				}
 				// System.out.println(playerAttributes.toString());
@@ -94,10 +105,13 @@ public class BinaryGuessPlayer implements Player {
 
 			return new Guess(Guess.GuessType.Attribute, mostCommonAttribute, mostCommonValue);
 		}
+		//Grabs the last name if there's only one possible person left
 		return new Guess(Guess.GuessType.Person, "", possibleNames.get(0));
 	} // end of guess()
 
 	public HashMap<String, Integer> getCommonAttribute(String[] attributes) {
+		//Finds the most common value of an attribute, sets that and the number of 
+		//Times it is found in a hashmap
 		HashMap<String, Integer> commonAttribute = new HashMap<String, Integer>();
 		int count = 1, tempCount;
 		String common = attributes[0];
@@ -122,7 +136,7 @@ public class BinaryGuessPlayer implements Player {
 	}
 
 	public boolean answer(Guess currGuess) {
-		
+		//Simply checks if the answer applies to their personal attributes.
 		if (currGuess.getType().equals(Guess.GuessType.Person)) {
 			if (personalAttributes.get(0).get(0).equals(currGuess.getValue())) {
 				return true;
