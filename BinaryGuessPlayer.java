@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 
+
 /**
  * Binary-search based guessing player.
  * This player is for task C.
@@ -127,13 +128,27 @@ public class BinaryGuessPlayer implements Player
 	
 	
 	public boolean answer(Guess currGuess) {
-
+		System.out.println(personalAttributes.toString());
+		for(int i = 0; i < personalAttributes.size() - 1; i++)
+		{
+			if(currGuess.getType().equals(Guess.GuessType.Person))
+			{
+				if(personalAttributes.get(0).get(0).equals(currGuess.getValue()))
+					{
+						return true;
+					}
+			}
+			else
+			{
+				
+			}
+		}
 		// placeholder, replace
 		return false;
 	} // end of answer()
 
 	public boolean receiveAnswer(Guess currGuess, boolean answer) {
-
+		
 		// placeholder, replace
 		return true;
 	} // end of receiveAnswer()

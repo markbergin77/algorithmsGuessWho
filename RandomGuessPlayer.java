@@ -92,7 +92,7 @@ public class RandomGuessPlayer implements Player {
 
 				// Adds the personal attributes.
 				// System.out.println(Arrays.toString(newAttributeLine));
-				if (newAttributeLine.length == 1 && newAttributeLine[0].contains(chosenName)) {
+				if (newAttributeLine.length == 1 && newAttributeLine[0].equals(chosenName)) {
 					//Total data is found at top of file, if we find player, close off the TotalAttributes
 					foundPlayer = true;
 
