@@ -161,10 +161,10 @@ public class GuessWho
                 
                 // player 1 makes a guess
                 Guess currGuess = player1.guess();
-                log.add("Player "+ player1.getName() + " guessing " + currGuess);
+                log.add("Player 1 guessing " + currGuess);
                 // player 2 responds to guess
                 boolean currAnswer = player2.answer(currGuess);
-                log.add("Player " + player2.getName() + " answering " + currAnswer);
+                log.add("Player 2 answering " + currAnswer);
                 // player 1 receives response and updates own status
                 // If player 1 made a person guess and it was correct, player1Finished should be true;
                 // otherwise be false.
@@ -172,10 +172,10 @@ public class GuessWho
 
                 // player 2's turn
                 currGuess = player2.guess();
-                log.add("Player "+ player2.getName() + " guessing " + currGuess);
+                log.add("Player 2 guessing " + currGuess);
                 // player 1 responds to guess
                 currAnswer = player1.answer(currGuess);
-                log.add("Player " + player1.getName() + " answering " + currAnswer);
+                log.add("Player 1 answering " + currAnswer);
                 // player 2 receives response and updates own status
                 // If player 2 made a person guess and it was correct, player2Finished should be true;
                 // otherwise be false
