@@ -11,21 +11,19 @@ import java.util.Random;
  * that this class implements the Player interface (directly or indirectly).
  */
 public class RandomGuessPlayer implements Player {
-	String name;
-
-    //used to store all remaing attributes that haven't been guessed
+	// used to store all remaing attributes that haven't been guessed
 	ArrayList<LinkedList<String>> totalAttributes = new ArrayList<LinkedList<String>>();
 
-    //store data of chosen player
+	// store data of chosen player
 	ArrayList<LinkedList<String>> personalAttributes = new ArrayList<LinkedList<String>>();
 
-    //store all possible players with attribute data
+	// store all possible players with attribute data
 	ArrayList<ArrayList<LinkedList<String>>> playerData = new ArrayList<ArrayList<LinkedList<String>>>();
-    ArrayList<LinkedList<String>> playerAttributes = new ArrayList<LinkedList<String>>();
+	ArrayList<LinkedList<String>> playerAttributes = new ArrayList<LinkedList<String>>();
 
-
-    //last guess names and index's - saves looping and comparison over curguess to get index
-	int attributeNum; 
+	// last guess names and index's - saves looping and comparison over curguess
+	// to get index
+	int attributeNum;
 	String selectedAttribute;
 
 	int valueNum;
@@ -46,157 +44,144 @@ public class RandomGuessPlayer implements Player {
 	 *             implementation exits gracefully if an IOException is thrown.
 	 */
 	public RandomGuessPlayer(String gameFilename, String chosenName) throws IOException {
-		setName(chosenName);
 		readAttributes(gameFilename, chosenName);
 	} // end of RandomGuessPlayer()
 
+	// returns random number in range
+	public static int getRandomInt(int min, int max) {
 
+		Random random = new Random();
 
-    //returns random number in range
-	public static int getRandomInt(int min, int max){
+		// selects random from range
+		int num = random.nextInt((max - min) + 1) + min;
 
-	    Random random = new Random();
-
-   		//selects random from range
-   	   int num = random.nextInt((max - min) + 1) + min;
-
-       return num;
+		return num;
 
 	}
 
 	public Guess guess() {
 
+		// if only one possible player is left, return a player guess
+		if (playerData.size() == 1) {
 
-		//selects attribute from remaining attributes
-		 attributeNum = getRandomInt(0,totalAttributes.size() - 1);
-		 selectedAttribute = totalAttributes.get(attributeNum).get(0);
+			// gets player name
+			String guessName = playerData.get(0).get(0).get(0);
 
-		//selects values from remaing attributes list
-		 valueNum = getRandomInt(1,totalAttributes.get(attributeNum).size() - 1);
-		 selectedValue = totalAttributes.get(attributeNum).get(valueNum);
-
-
-         //if only one possible player is left, return a player guess
-		 if(playerData.size() == 1 ) {
-
-             //gets player name 
-		 	 String guessName = playerData.get(0).get(0).get(0);
-		
 			return new Guess(Guess.GuessType.Person, "", guessName);
 
-		 }
+		}
 
-         //returns Attribute guess
-		 return new Guess(Guess.GuessType.Attribute, selectedAttribute, selectedValue);
+		if (totalAttributes.size() > 0) {
+			// selects attribute from remaining attributes
+			attributeNum = getRandomInt(0, totalAttributes.size() - 1);
+			selectedAttribute = totalAttributes.get(attributeNum).get(0);
 
-	
+			// selects values from remaing attributes list
+			valueNum = getRandomInt(1, totalAttributes.get(attributeNum).size() - 1);
+			selectedValue = totalAttributes.get(attributeNum).get(valueNum);
+
+		}
+
+		// returns Attribute guess
+		return new Guess(Guess.GuessType.Attribute, selectedAttribute, selectedValue);
+
 	} // end of guess()
 
 	public boolean answer(Guess currGuess) {
 
-    	//Simply checks if the answer applies to their personal attributes.
+		// Simply checks if the answer applies to their personal attributes.
 		if (currGuess.getType().equals(Guess.GuessType.Person)) {
 			if (personalAttributes.get(0).get(0).equals(currGuess.getValue())) {
 				return true;
 			}
 		} else {
 			for (int i = 0; i < personalAttributes.size() - 1; i++) {
-				
-				if(personalAttributes.get(i).get(0).equals(currGuess.getAttribute()))
-					{
-					
-						if(personalAttributes.get(i).get(1).equals(currGuess.getValue()))
-						{
-							return true;
-						}
+
+				if (personalAttributes.get(i).get(0).equals(currGuess.getAttribute())) {
+
+					if (personalAttributes.get(i).get(1).equals(currGuess.getValue())) {
+						return true;
 					}
+				}
 			}
 		}
-		// placeholder, replace
+
 		return false;
 	} // end of answer()
 
 	public boolean receiveAnswer(Guess currGuess, boolean answer) {
 
-         //removes last guess from pool to guess out of
-         totalAttributes.get(attributeNum).remove(selectedValue);
-
-         //if attribute list has no values left remove attribute entirly
-         if( totalAttributes.get(attributeNum).size() == 1){
-
-            totalAttributes.remove(attributeNum);
-         }
-
-        
-
-		//stores if a players index should be removed from possible players
+		// stores if a players index should be removed from possible players
 		boolean toRemove[] = new boolean[playerData.size()];
 
-        // if guess is of type player and correct returns true
-       	if (currGuess.getType().equals(Guess.GuessType.Person)) {
-            if(answer){
-                return true;
-            }
-            
-            return false;            
+		// if guess is of type player and correct returns true
+		if (currGuess.getType().equals(Guess.GuessType.Person)) {
+			if (answer) {
+				return true;
+			}
 
-        //else checks to see which players can be eliminated from pool
-        }else{
+			return false;
 
-		//loop through all possible players
-		for(int i = 0 ; i < playerData.size(); i++){
+			// else checks to see which players can be eliminated from pool
+		} else {
 
-			//loop through all attributes
-			for(int j = 1; j < playerData.get(i).size(); j++){
+			// loop through all possible players
+			for (int i = 0; i < playerData.size(); i++) {
+				// loop through all attributes
+				for (int j = 1; j < playerData.get(i).size(); j++) {
 
-				//checks if attribute matches guess
-				if(playerData.get(i).get(j).get(0).equals(currGuess.getAttribute())){
+					// checks if attribute matches guess
+					if (playerData.get(i).get(j).get(0).equals(currGuess.getAttribute())) {
 
-					//checks if guess value matches possible player attribute value
-					if(playerData.get(i).get(j).get(1).equals(currGuess.getValue())){
-					
-						if(!answer){
-							toRemove[i] = true;
+						// checks if guess value matches possible player
+						// attribute value
+						if (playerData.get(i).get(j).get(1).equals(currGuess.getValue())) {
+
+							if (!answer) {
+
+								toRemove[i] = true;
+							} else {
+
+								toRemove[i] = false;
+							}
+
+						} else {
+
+							if (answer) {
+								toRemove[i] = true;
+							}
+
 						}
-
-					}else{
-
-						if(answer){
-							toRemove[i] = true;
-						}
-
 					}
 				}
+
 			}
 
 		}
+		// removes player starting from last to first to stop order issues
+		for (int i = (playerData.size() - 1); i >= 0; i--) {
 
-        //removes player starting from last to first to stop order issues
-		for (int i = (playerData.size() - 1); i > 0; i--){
+			if (toRemove[i] == true) {
 
-			if(toRemove[i] == true){
 				playerData.remove(i);
+
 			}
 		}
-        
-        }
 
-		
+		// removes last guess from pool to guess out of
+		totalAttributes.get(attributeNum).remove(selectedValue);
+
+		// if attribute list has no values left remove attribute entirly
+		if (totalAttributes.get(attributeNum).size() == 1) {
+
+			totalAttributes.remove(attributeNum);
+		} else if (answer) {
+			totalAttributes.remove(attributeNum);
+		}
+
 		return false;
 
-
 	} // end of receiveAnswer()
-
-	public void setName(String chosenName) {
-		// TODO Auto-generated method stub
-		this.name = chosenName;
-
-	}
-
-	public String getName() {
-		// TODO Auto-generated method stub
-		return this.name;
-	}
 
 	public void readAttributes(String gameFilename, String chosenName) {
 		// Luckily for us, we don't have to deal with the Config files being
@@ -211,10 +196,10 @@ public class RandomGuessPlayer implements Player {
 			// opens config file for reading
 			BufferedReader br = new BufferedReader(new FileReader(gameFilename));
 			while ((thisLine = br.readLine()) != null) {
-				
+
 				// Uses split to format to array
 				String[] newAttributeLine = thisLine.split(" ");
-				
+
 				// Adds the total attributes
 				// If the length is > 2
 				if (newAttributeLine.length > 1 && foundPlayer == false) {
@@ -228,7 +213,8 @@ public class RandomGuessPlayer implements Player {
 				// Adds the personal attributes.
 				// System.out.println(Arrays.toString(newAttributeLine));
 				if (newAttributeLine.length == 1 && newAttributeLine[0].equals(chosenName)) {
-					//Total data is found at top of file, if we find player, close off the TotalAttributes
+					// Total data is found at top of file, if we find player,
+					// close off the TotalAttributes
 					foundPlayer = true;
 
 					newAttribute = new LinkedList<String>();
@@ -252,15 +238,14 @@ public class RandomGuessPlayer implements Player {
 
 				}
 
-				
 				// Adds the player attributes.
 				// System.out.println(Arrays.toString(newAttributeLine));
 				if (newAttributeLine.length == 1 && newAttributeLine[0].contains("P")) {
-					//Total data is found at top of file, if we find player, close off the TotalAttributes
+					// Total data is found at top of file, if we find player,
+					// close off the TotalAttributes
 					foundPlayer = true;
 
 					newAttribute = new LinkedList<String>();
-
 
 					newAttribute.add(newAttributeLine[0]);
 					playerAttributes.add(newAttribute);
@@ -279,32 +264,32 @@ public class RandomGuessPlayer implements Player {
 						newAttributeLine = br.readLine().split(" ");
 					}
 
-                    //adds player attribute data to player pool
+					// adds player attribute data to player pool
 					playerData.add(playerAttributes);
 
 					playerAttributes = new ArrayList<LinkedList<String>>();
 				}
-				
+
 			}
 			br.close();
 		} catch (Exception e) {
-		//	System.err.println(e);
+			// System.err.println(e);
 		}
 
-        printAttributes(personalAttributes);
-		//System.out.println(personalAttributes.toString());
+		printAttributes(personalAttributes);
+		// System.out.println(personalAttributes.toString());
 	}
 
-    public void printAttributes(ArrayList<LinkedList<String>> attributesList){
-    
-        for(int i = 0; i < attributesList.size(); i++){
-            
-            	System.out.println(personalAttributes.get(i).toString());
+	public void printAttributes(ArrayList<LinkedList<String>> attributesList) {
 
-        }    
+		for (int i = 0; i < attributesList.size(); i++) {
 
-        System.out.println("");
+			System.out.println(personalAttributes.get(i).toString());
 
-    }
+		}
+
+		System.out.println("");
+
+	}
 
 } // end of class RandomGuessPlayer

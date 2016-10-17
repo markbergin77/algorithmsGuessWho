@@ -11,7 +11,8 @@ import java.util.LinkedList;
  * that this class implements the Player interface (directly or indirectly).
  */
 public class BinaryGuessPlayer implements Player {
-	String name;
+	
+	// Attributes distance is the number of lines of attributes each playerhas.
 	int attibutesDistance = 0;
 	// Arrays for use
 	// Used for when scanning for most common answers
@@ -40,7 +41,7 @@ public class BinaryGuessPlayer implements Player {
 	 *             implementation exits gracefully if an IOException is thrown.
 	 */
 	public BinaryGuessPlayer(String gameFilename, String chosenName) throws IOException {
-		setName(chosenName);
+
 		readAttributes(gameFilename, chosenName);
 	} // end of RandomGuessPlayer()
 
@@ -60,62 +61,61 @@ public class BinaryGuessPlayer implements Player {
 						- possiblePeopleMap.get(possibleNames.get(0)));
 			}
 
-			// try {
-			String current;
-			// -1 skips the Player name/title
-			for (int i = 1; i < attibutesDistance; i++) {
-				int nameIndex = 0;
-				// attributesDistance - 2 is the number of attributes from
-				// Person title to the blank config space
-				String currentAttribute[] = new String[possibleNames.size()];
-				
-				for (int looper = 0; looper <= possibleNames.size() - 1; looper++) {
-					
-					currentAttribute[looper] = playerAttributes
-							.get(possiblePeopleMap.get(possibleNames.get(nameIndex)) + i).get(1);
-					
-					if (nameIndex < possibleNames.size() - 1) {
-						nameIndex++;
+			try {
+				String current;
+				// -1 skips the Player name/title
+				for (int i = 1; i < attibutesDistance; i++) {
+					int nameIndex = 0;
+					// attributesDistance - 2 is the number of attributes from
+					// Person title to the blank config space
+					String currentAttribute[] = new String[possibleNames.size()];
+
+					for (int looper = 0; looper <= possibleNames.size() - 1; looper++) {
+
+						currentAttribute[looper] = playerAttributes
+								.get(possiblePeopleMap.get(possibleNames.get(nameIndex)) + i).get(1);
+
+						if (nameIndex < possibleNames.size() - 1) {
+							nameIndex++;
+						}
+
 					}
-					
 
+					// index of the attribute type we're on, Glasses, Height,
+					// etc. (Not the adjective like yellow, etc)
+
+					HashMap<String, Integer> commonAttribute = getCommonAttribute(currentAttribute);
+
+					// Need to grab the key for checking most common number
+					String foundValue = null;
+					for (String key : commonAttribute.keySet()) {
+						foundValue = key;
+					}
+
+					// Makes sure found key doesn't apply for all possible
+					// people, and checks if higher than current set
+
+					if (commonAttribute.get(foundValue) > mostCommonNumber
+							&& commonAttribute.get(foundValue) != possibleNames.size()) {
+
+						// Sets the attribute ("height" "glasses" "colour" etc.)
+						mostCommonAttribute = playerAttributes.get(possiblePeopleMap.get(possibleNames.get(0)) + i)
+								.get(0);
+						// Sets the value ("Red", 2 etc)
+						mostCommonValue = foundValue;
+						// number of times the value was found
+						mostCommonNumber = commonAttribute.get(foundValue);
+					}
 				}
-				
-				// index of the attribute type we're on, Glasses, Height,
-				// etc. (Not the adjective like yellow, etc)
-				
-				HashMap<String, Integer> commonAttribute = getCommonAttribute(currentAttribute);
 
-				// Need to grab the key for checking most common number
-				String foundValue = null;
-				for (String key : commonAttribute.keySet()) {
-					foundValue = key;
-				}
+				// placeholder, replace
+			} catch (Exception e) {
 
-				// Makes sure found key doesn't apply for all possible
-				// people, and checks if higher than current set
-			
-				if (commonAttribute.get(foundValue) > mostCommonNumber
-						&& commonAttribute.get(foundValue) != possibleNames.size()) {
-				
-
-					// Sets the attribute ("height" "glasses" "colour" etc.)
-					mostCommonAttribute = playerAttributes.get(possiblePeopleMap.get(possibleNames.get(0)) + i).get(0);
-					// Sets the value ("Red", 2 etc)
-					mostCommonValue = foundValue;
-					// number of times the value was found
-					mostCommonNumber = commonAttribute.get(foundValue);
-				}
 			}
-
-			// placeholder, replace
-			// } catch (Exception e) {
-			// System.err.println(e);
-			// }
 
 			return new Guess(Guess.GuessType.Attribute, mostCommonAttribute, mostCommonValue);
 		}
-		// Grabs the last name if there's only one possible person left
+		// Guess' person if only one person remaining
 		return new Guess(Guess.GuessType.Person, "", possibleNames.get(0));
 	} // end of guess()
 
@@ -128,30 +128,39 @@ public class BinaryGuessPlayer implements Player {
 		int finalCount = 0;
 		String finalValue;
 		String currentValue = null;
-		for (int i = 0; i < attributes.length - 1; i ++)
-		{
+
+		// solution if number of possible people is 2
+		if (attributes.length == 2) {
+			if (attributes[0].equals(attributes[1])) {
+				commonAttribute.put(attributes[0], 2);
+				return commonAttribute;
+			} else {
+				commonAttribute.put(attributes[0], 1);
+				return commonAttribute;
+			}
+		}
+
+		// else search through and work out how many times the items is in the
+		// array
+		for (int i = 0; i < attributes.length - 1; i++) {
 			count = 0;
 			currentValue = attributes[i];
-			
-			if(i == 0)
-			{
+
+			if (i == 0) {
 				count = 1;
 			}
-			
-			for(int looper = 0; looper < attributes.length - 1; looper++)
-			{
-				if(currentValue.equals(attributes[looper]))
-				{
+
+			for (int looper = 0; looper < attributes.length - 1; looper++) {
+				if (currentValue.equals(attributes[looper])) {
 					count++;
 				}
 			}
-			if(count > finalCount)
-			{
+			if (count > finalCount) {
 				finalCount = count;
 				finalValue = currentValue;
 			}
 		}
-		
+
 		commonAttribute.put(currentValue, finalCount);
 		return commonAttribute;
 
@@ -182,14 +191,21 @@ public class BinaryGuessPlayer implements Player {
 	} // end of answer()
 
 	public boolean receiveAnswer(Guess currGuess, boolean answer) {
+		// Gets the answer applies deletions on true and false
 		String currentPlayer = null;
+
+		// Quick check for if the guess was a person, only time it can be true
 		if (currGuess.getType() == Guess.GuessType.Person) {
 			if (answer == true) {
 				return true;
 			}
 
 			return false;
-		} else {
+		}
+
+		else {
+			// searches through player file to check when the attributes match.
+			// Removes the players that has same attribute value
 			if (answer == false) {
 				for (int i = 0; i < playerAttributes.size() - 1; i++) {
 					if (playerAttributes.get(i).size() == 1 & playerAttributes.get(i).get(0).contains("P")) {
@@ -202,7 +218,8 @@ public class BinaryGuessPlayer implements Player {
 					}
 				}
 
-			} else {
+			} 
+			else {
 				for (int i = 0; i < playerAttributes.size() - 1; i++) {
 					if (playerAttributes.get(i).size() == 1 & playerAttributes.get(i).get(0).contains("P")) {
 						currentPlayer = playerAttributes.get(i).get(0);
@@ -221,6 +238,9 @@ public class BinaryGuessPlayer implements Player {
 	} // end of receiveAnswer()
 
 	public void removePlayer(String currentPlayer) {
+		// Removes from Map as well as possibleNames list
+		// These two are the only structures that need altering for accurate
+		// guess
 		for (int i = 0; i < possibleNames.size(); i++) {
 			if (possibleNames.get(i).equals(currentPlayer)) {
 				possibleNames.remove(i);
@@ -333,17 +353,6 @@ public class BinaryGuessPlayer implements Player {
 		} catch (Exception e) {
 		}
 
-	}
-
-	public void setName(String name) {
-		// TODO Auto-generated method stub
-		this.name = name;
-	}
-
-	public String getName() {
-
-		// TODO Auto-generated method stub
-		return name;
 	}
 
 } // end of class BinaryGuessPlayer

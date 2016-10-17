@@ -40,9 +40,6 @@ public interface Player
 	 */
 	abstract public boolean receiveAnswer(Guess currGuess, boolean answer);
 	
-	//Getters and setters for each class
-	abstract public void setName(String name);
-	abstract public String getName();
 	
 	public void readAttributes(String gameFilename, String chosenName);
 } // end of interface Player
